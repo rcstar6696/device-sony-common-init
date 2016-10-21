@@ -111,17 +111,24 @@ fota_num_set := true
 endif
 endif
 
-# Abort if the device is not handled
-ifneq ($(fota_num_set),true)
-$(error device-sony-common-init: DEV_BLOCK_FOTA_NUM missing for "$(TARGET_DEVICE)", platform "$(PRODUCT_PLATFORM)")
-endif
-
 # Board: tone
 ifneq ($(filter tone,$(PRODUCT_PLATFORM)),)
+ifneq ($(filter kagura,$(TARGET_DEVICE)),)
+LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_NUM="49"
+LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_MAJOR="259"
+LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_MINOR="17"
+fota_num_set := true
+else
 LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_NUM="45"
 LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_MAJOR="259"
 LOCAL_CFLAGS += -DDEV_BLOCK_FOTA_MINOR="13"
 fota_num_set := true
+endif
+endif
+
+# Abort if the device is not handled
+ifneq ($(fota_num_set),true)
+$(error device-sony-common-init: DEV_BLOCK_FOTA_NUM missing for "$(TARGET_DEVICE)", platform "$(PRODUCT_PLATFORM)")
 endif
 
 # FOTA check is broken on all devices
